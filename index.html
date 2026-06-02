@@ -692,10 +692,10 @@ footer .brand{color:#3b82f6;font-weight:700}
           <div class="field">
             <label>내신 평균 등급 <span id="susi-school-system-label" style="color:#3b82f6;font-size:10px">(5등급제)</span></label>
             <select id="susi-school">
-              <option value="">선택 안함</option>
+              <option value="" selected>선택 안함</option>
               <option value="1">1등급</option>
               <option value="2">2등급</option>
-              <option value="3" selected>3등급</option>
+              <option value="3">3등급</option>
               <option value="4">4등급</option>
               <option value="5">5등급</option>
             </select>
@@ -703,8 +703,9 @@ footer .brand{color:#3b82f6;font-weight:700}
           <div class="field">
             <label>실기 자신감</label>
             <select id="susi-practice-level">
+              <option value="" selected>선택 안함</option>
               <option value="high">상 (실기 강함 - 실기형 학교 추천)</option>
-              <option value="mid" selected>중 (균형형 학교 추천)</option>
+              <option value="mid">중 (균형형 학교 추천)</option>
               <option value="low">하 (학생부 비중 큰 학교 추천)</option>
             </select>
           </div>
@@ -1258,7 +1259,7 @@ function renderSusi() {
     'mid':  {'균형형': 3, '실기형': 2, '학생부형': 2},
     'low':  {'학생부형': 3, '균형형': 2, '실기형': 1}
   };
-  const scoreMap = balanceScore[f.practiceLevel];
+  const scoreMap = balanceScore[f.practiceLevel] || balanceScore.mid;
   filtered.sort((a, b) => (scoreMap[b.balance] || 0) - (scoreMap[a.balance] || 0));
   
   const stats = {실기형:0,균형형:0,학생부형:0,total:filtered.length};
@@ -1435,8 +1436,8 @@ function applyExtractedFilters(data, isSusi) {
   if (data.school_grade) filterApplied.push('내신: '+data.school_grade+'등급');
   if (data.pct) filterApplied.push('백분위: '+data.pct);
   if (data.eng) filterApplied.push('영어: '+data.eng+'등급');
-  if (data.categories && data.categories.length > 0) filterApplied.push('카테고리: '+data.categories.join(', '));
-  if (data.subcategories && data.subcategories.length > 0) filterApplied.push('세부: '+data.subcategories.join(', '));
+  if (data.categories && data.categories.length > 0 && data.categories.length < 4) filterApplied.push('카테고리: '+data.categories.join(', '));
+  if (data.subcategories && data.subcategories.length > 0 && data.subcategories.length < 16) filterApplied.push('세부: '+data.subcategories.join(', '));
   if (data.region) filterApplied.push('지역: '+data.region);
   if (data.practice_level) {
     const map = {high:'상',mid:'중',low:'하'};
@@ -2779,7 +2780,7 @@ async function consultAI() {
 
 주의: 반드시 매칭 데이터 내에서 학교 선택, 거주지에 따른 통학거리 고려, 학원·강사 관련 일화나 홍보 표현 금지, 학생 입장에서 객관적이고 실용적인 조언만 제공`;
   
-  const userMsg = '## 학생 자유 입력\n'+userText+'\n\n## 학생 정보\n- 학년: '+f.grade+' ('+sys.year+'학년도)\n- 내신: '+sys.school+'등급제\n- 영어: '+sys.sat+'등급제\n- 수능 백분위: '+f.pct+'\n- 영어 등급: '+f.eng+engInfo+'\n- 내신: '+(f.school?f.school+'등급':'미입력')+'\n- 지원군: '+f.groups.join(',')+'\n- 카테고리: '+f.categories.join(', ')+'\n\n## 매칭 학교 Top 50\n'+(matched.length>0?schoolsCtx:'매칭 없음');
+  const userMsg = '## 학생 자유 입력\n'+userText+'\n\n## 학생 정보\n- 학년: '+f.grade+' ('+sys.year+'학년도)\n- 내신: '+sys.school+'등급제\n- 영어: '+sys.sat+'등급제\n- 수능 백분위: '+f.pct+'\n- 영어 등급: '+f.eng+engInfo+'\n- 내신: '+(f.school?f.school+'등급':'미입력')+'\n- 지원군: '+f.groups.join(',')+'\n- 카테고리: '+(f.categories.length>0 && f.categories.length<4 ? f.categories.join(', ') : '미지정(특정 분야 안 정함 · 탐색 중)')+'\n\n## 매칭 학교 Top 50\n'+(matched.length>0?schoolsCtx:'매칭 없음');
   
   try {
     // 디버그: 화면에 단계별 진행 표시
@@ -2983,7 +2984,7 @@ async function consultSusiAI() {
 
 주의: 거주지에 따른 통학거리 고려, 학원·강사 홍보 금지, 수시 대학별 전형일정 충돌 체크 안내, 학생 입장의 객관적·실용적 조언만 제공`;
   
-  const userMsg = '## 학생 자유 입력\n'+userText+'\n\n## 학생 정보\n- 학년: '+f.grade+' ('+sys.year+'학년도 응시)\n- 내신 등급제: '+sys.school+'등급제\n- 내신: '+(f.school?f.school+'등급':'미입력')+'\n- 실기 자신감: '+f.practiceLevel+' (high=상/mid=중/low=하)\n- 카테고리: '+f.categories.join(', ')+'\n- 지역: '+(f.region||'전체')+'\n\n## 매칭 학교 ('+matched.length+'개)\n'+(matched.length>0?schoolsCtx:'매칭 없음');
+  const userMsg = '## 학생 자유 입력\n'+userText+'\n\n## 학생 정보\n- 학년: '+f.grade+' ('+sys.year+'학년도 응시)\n- 내신 등급제: '+sys.school+'등급제\n- 내신: '+(f.school?f.school+'등급':'미입력')+'\n- 실기 자신감: '+(f.practiceLevel||'미입력')+' (high=상/mid=중/low=하)\n- 카테고리: '+(f.categories.length>0 && f.categories.length<4 ? f.categories.join(', ') : '미지정(특정 분야 안 정함 · 탐색 중)')+'\n- 지역: '+(f.region||'전체')+'\n\n## 매칭 학교 ('+matched.length+'개)\n'+(matched.length>0?schoolsCtx:'매칭 없음');
   
   try {
     // 디버그: 화면에 단계별 진행 표시
