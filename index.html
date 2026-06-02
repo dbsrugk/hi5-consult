@@ -2768,7 +2768,7 @@ async function consultAI() {
     
     // 30초 타임아웃
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
     
     const t0 = Date.now();
     let response;
@@ -2785,7 +2785,7 @@ async function consultAI() {
       clearTimeout(timeoutId);
       stopLoadingAnimation(loadingHandles);
       btn.disabled = false; btn.textContent = '🤖 AI 분석 받기';
-      const errMsg = fetchErr.name === 'AbortError' ? '30초 timeout — API 응답이 없습니다' : (fetchErr.message || fetchErr.toString());
+      const errMsg = fetchErr.name === 'AbortError' ? '90초 timeout — API 응답이 없습니다' : (fetchErr.message || fetchErr.toString());
       result.innerHTML = '<div style="background:#fef2f2;border:2px solid #ef4444;border-radius:10px;padding:18px;color:#7f1d1d;font-size:13px;line-height:1.7"><h3 style="margin-bottom:8px">❌ Fetch 실패</h3><div style="font-family:monospace;background:#fff;padding:10px;border-radius:6px;font-size:12px">' + errMsg + '</div><p style="margin-top:10px">→ 인터넷 연결, API 키, 또는 CORS 문제 가능성</p><p style="margin-top:8px;font-size:11px;color:#b91c1c;word-break:break-all">🔗 연결 주소: ' + AI_PROXY_URL + '</p></div>';
       return;
     }
@@ -2972,7 +2972,7 @@ async function consultSusiAI() {
     
     // 30초 타임아웃
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
     
     const t0 = Date.now();
     let response;
@@ -2989,7 +2989,7 @@ async function consultSusiAI() {
       clearTimeout(timeoutId);
       stopLoadingAnimation(loadingHandles);
       btn.disabled = false; btn.textContent = '🤖 AI 분석 받기';
-      const errMsg = fetchErr.name === 'AbortError' ? '30초 timeout — API 응답이 없습니다' : (fetchErr.message || fetchErr.toString());
+      const errMsg = fetchErr.name === 'AbortError' ? '90초 timeout — API 응답이 없습니다' : (fetchErr.message || fetchErr.toString());
       result.innerHTML = '<div style="background:#fef2f2;border:2px solid #ef4444;border-radius:10px;padding:18px;color:#7f1d1d;font-size:13px;line-height:1.7"><h3 style="margin-bottom:8px">❌ Fetch 실패</h3><div style="font-family:monospace;background:#fff;padding:10px;border-radius:6px;font-size:12px">' + errMsg + '</div><p style="margin-top:10px">→ 인터넷 연결, API 키, 또는 CORS 문제 가능성</p><p style="margin-top:8px;font-size:11px;color:#b91c1c;word-break:break-all">🔗 연결 주소: ' + AI_PROXY_URL + '</p></div>';
       return;
     }
